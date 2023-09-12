@@ -13,6 +13,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// json middleware
+app.use(express.json());
+
 // READ 고양이 데이터 다 조회
 app.get("/cats", (req, res) => {
   try {
@@ -36,13 +39,29 @@ app.get("/cats", (req, res) => {
 app.get("/cats/:id", (req, res) => {
   try {
     const params = req.params;
-    console.log(params);
     const cat = Cat.find((v) => v.id === params.id);
     res.status(200).send({
       success: true,
       data: {
         cat,
       },
+    });
+  } catch (error: any) {
+    res.status(400).send({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
+// CREATE 새로운 고양이 추가
+app.post("/cats", (req, res) => {
+  try {
+    const data = req.body;
+    Cat.push(data);
+    res.status(200).send({
+      success: true,
+      data,
     });
   } catch (error: any) {
     res.status(400).send({
