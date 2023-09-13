@@ -1,5 +1,5 @@
 import * as express from "express";
-import { Cat, CatType } from "./app.model";
+import catsRouter from "./cats/cats.route";
 
 const app: express.Express = express();
 const port: number = 8000;
@@ -15,61 +15,8 @@ app.use((req, res, next) => {
 
 // json middleware
 app.use(express.json());
-
-// READ 고양이 데이터 다 조회
-app.get("/cats", (req, res) => {
-  try {
-    const cats = Cat;
-    // throw new Error("db connect error");
-    res.status(200).send({
-      success: true,
-      data: {
-        cats,
-      },
-    });
-  } catch (error: any) {
-    res.status(400).send({
-      success: false,
-      error: error.message,
-    });
-  }
-});
-
-// READ 특정 고양이 조회
-app.get("/cats/:id", (req, res) => {
-  try {
-    const params = req.params;
-    const cat = Cat.find((v) => v.id === params.id);
-    res.status(200).send({
-      success: true,
-      data: {
-        cat,
-      },
-    });
-  } catch (error: any) {
-    res.status(400).send({
-      success: false,
-      error: error.message,
-    });
-  }
-});
-
-// CREATE 새로운 고양이 추가
-app.post("/cats", (req, res) => {
-  try {
-    const data = req.body;
-    Cat.push(data);
-    res.status(200).send({
-      success: true,
-      data,
-    });
-  } catch (error: any) {
-    res.status(400).send({
-      success: false,
-      error: error.message,
-    });
-  }
-});
+// cat 정보를 관리하는 라우터 연결
+app.use(catsRouter);
 
 // 존재하지 않는 라우터에 올경우 error처리를 위해 라우터 가장 아래에 미들웨어를 둠
 app.use((req, res, next) => {
